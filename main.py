@@ -11,9 +11,6 @@ from bs4 import BeautifulSoup
 
 
 TIMEOUT = aiohttp.ClientTimeout(total=300, connect=5)
-
-# Number of worker: the maximum number of processes
-NUM_WORKERS = 10
 LINK = 'https://bscscan.com/txs/'
 UA = UserAgent(verify_ssl=False)
 
@@ -26,6 +23,7 @@ data_dir = os.path.join(os.getcwd(), 'data')
 if not os.path.exists(data_dir):
     os.mkdir(data_dir)
 
+
 async def get_pages(url):
     async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False), timeout=TIMEOUT,
                                      headers=headers) as session:
@@ -33,7 +31,8 @@ async def get_pages(url):
             body = await resp.text()
             soup = BeautifulSoup(body, 'lxml')
 
-            page_count = soup.find('div', class_='d-md-flex justify-content-between my-3').find('ul', class_='pagination').find_all('li', class_='page-item')[2].\
+            page_count = soup.find('div', class_='d-md-flex justify-content-between my-3').\
+                find('ul', class_='pagination').find_all('li', class_='page-item')[2].\
                 find('span', class_='page-link').find_all('strong')[1].text.strip()
 
             return page_count
@@ -52,9 +51,6 @@ async def get_data(page, count):
             body = await resp.text()
             soup = BeautifulSoup(body, 'lxml')
 
-            with open('html.html', 'w') as f:
-                f.write(body)
-
             table_wall = soup.find('div', attrs={'id': 'paywall_mask'}).find('table', class_='table').\
                 find('tbody').find_all('tr')
 
@@ -63,8 +59,8 @@ async def get_data(page, count):
                 try:
                     hash_tag = id_wall.find('span', class_='hash-tag').find('a').text.strip()
                     wall_set.add(hash_tag)
-                except AttributeError as ex:
-                    del ex
+                except AttributeError:
+                    del AttributeError
 
     with open(os.path.join(data_dir, 'wall.csv'), 'a', encoding='utf-8') as doc:
         writer = csv.writer(doc)
