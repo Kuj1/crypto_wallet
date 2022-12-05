@@ -29,7 +29,7 @@ async def get_pages(url):
                                      headers=headers) as session:
         async with session.get(url) as resp:
             body = await resp.text()
-            soup = BeautifulSoup(body, 'lxml')
+            soup = BeautifulSoup(body, 'html.parser')
 
             page_count = soup.find('div', class_='d-md-flex justify-content-between my-3').\
                 find('ul', class_='pagination').find_all('li', class_='page-item')[2].\
@@ -49,7 +49,7 @@ async def get_data(page, count):
         page_url = f'https://bscscan.com/txs?p={page}'
         async with session.get(page_url) as resp:
             body = await resp.text()
-            soup = BeautifulSoup(body, 'lxml')
+            soup = BeautifulSoup(body, 'html.parser')
 
             table_wall = soup.find('div', attrs={'id': 'paywall_mask'}).find('table', class_='table').\
                 find('tbody').find_all('tr')
