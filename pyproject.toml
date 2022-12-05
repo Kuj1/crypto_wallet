@@ -12,7 +12,6 @@ asyncio = "^3.4.3"
 bs4 = "^0.0.1"
 aiohttp = "^3.8.3"
 fake-useragent = "^0.1.14"
-lxml = "^4.9.1"
 
 
 [build-system]
